@@ -2,8 +2,7 @@
   const SVG_NS = "http://www.w3.org/2000/svg";
   const COMPONENT_COLORS = ["#4fd1a5","#e8a94c","#7aa2f7","#e0645a","#c792ea","#5fd3d3","#f28fb0","#a3d977"];
 
-  let n = 2;
-  let mode = null;              
+  let n = 2;             
   let edges = new Set();        
   let adj = {};                
   let positions = [];           
@@ -140,7 +139,7 @@
     const order = [...Array(n).keys()].map(x=>x+1);
     for(let i=1;i<order.length;i++){
   
-      if(Math.random() < 0.9){// aqui podrias cambiar la probabilidad
+      if(Math.random() < 0.6777777){// aqui podrias cambiar la probabilidad
         const j = order[Math.floor(Math.random()*i)];
         edges.add(edgeKey(order[i], j));
       }
