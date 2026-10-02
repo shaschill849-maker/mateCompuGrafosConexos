@@ -1,0 +1,1 @@
+shutupnnga sharaoutpara claude
