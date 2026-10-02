@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Componentes Conexas</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>Componentes Conexas</h1>
+  <p class="subtitle">Construye un grafo y conseguiras sus componentes conexas.</p>
+
+
+  <div class="card" id="card-n">
+    <h2><span class="n">01</span> Numero de nodos</h2>
+    <div class="row">
+      <input type="number" id="input-n" min="4" max="12" value="4">
+      <span class="hint" style="margin:0;">entre 4 y 12</span>
+      <button id="btn-n-continue">Continuar</button>
+    </div>
+    <div class="error hidden" id="error-n"></div>
+  </div>
+
+  <div class="card hidden" id="card-mode">
+    <h2><span class="n">02</span> Generacion del grafo</h2>
+    <div class="choice-group">
+      <div class="choice-btn" id="choice-manual">Manual</div>
+      <div class="choice-btn" id="choice-random">Aleatorio</div>
+    </div>
+
+    <div id="manual-panel" class="hidden">
+      <p class="hint">Haz clic en dos nodos para conectarlos o desconectarlos.</p>
+      <svg id="svg-manual" width="480" height="380" viewBox="0 0 480 380"></svg>
+      <div class="edge-list" id="manual-edge-list"></div>
+    </div>
+
+    <div id="random-panel" class="hidden">
+      <div class="row">
+        <button class="secondary" id="btn-regenerate">Generar de nuevo</button>
+      </div>
+      <svg id="svg-random" width="480" height="380" viewBox="0 0 480 380" style="margin-top:14px;"></svg>
+    </div>
+
+    <div class="row" style="margin-top:18px;">
+      <button id="btn-build" disabled>Construir grafo</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="card-matrix">
+    <h2><span class="n">03</span> Matriz de adyacencia</h2>
+    <div id="matrix-container"></div>
+    <div class="row" style="margin-top:20px;">
+      <button id="btn-start-algo">Iniciar algoritmo</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="card-algo">
+    <h2><span class="n">04</span> Ejecucion paso a paso (BFS)</h2>
+    <svg id="svg-algo" width="480" height="380" viewBox="0 0 480 380"></svg>
+    <div class="step-log" id="step-log">Presiona «Siguiente paso» para comenzar.</div>
+    <div class="row" style="margin-top:16px;">
+      <button id="btn-next-step">Siguiente paso</button>
+      <button class="secondary" id="btn-skip">Ir al resultado final</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="card-results">
+    <h2><span class="n">05</span> Resultado</h2>
+    <div class="row" style="justify-content:space-between; margin-bottom:18px;">
+      <div>
+        <div class="big-number" id="result-count">0</div>
+        <div class="hint" style="margin-top:2px;">componentes conexas encontradas</div>
+      </div>
+    </div>
+    <div class="results-list" id="results-list"></div>
+    <svg id="svg-result" width="480" height="380" viewBox="0 0 480 380" style="margin-top:20px;"></svg>
+    <div class="row" style="margin-top:18px;">
+      <button class="secondary" id="btn-restart">Empezar de nuevo</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
