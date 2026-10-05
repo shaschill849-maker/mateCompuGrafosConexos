@@ -90,8 +90,8 @@
   document.getElementById("btn-n-continue").addEventListener("click", () => {
     const val = parseInt(inputNodos.value, 10);
     const errorElem = document.getElementById("error-n");
-    if (isNaN(val) || val < 4 || val > 12) {
-      errorElem.textContent = "Ingresa un número entero entre 4 y 12.";
+    if (isNaN(val) || val < 6 || val > 12) {
+      errorElem.textContent = "Ingresa un número entero entre 6 y 12.";
       errorElem.classList.remove("hidden");
       return;
     }
