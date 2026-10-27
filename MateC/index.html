@@ -3,80 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Componentes Conexas</title>
+<title>Componentes Fuertemente Conexas</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="wrap">
-  <h1>Componentes Conexas</h1>
-  <p class="subtitle">Construye un grafo y conseguiras sus componentes conexas.</p>
+<div class="contenedor">
+  <h1>Componentes Fuertemente Conexas</h1>
+  <p class="subtitulo">Construye un grafo dirigido y obtén sus componentes fuertemente conexas con el algoritmo de Tarjan.</p>
 
-
-  <div class="card" id="card-n">
-    <h2><span class="n">01</span> Numero de nodos</h2>
-    <div class="row">
-      <input type="number" id="input-n" min="6" max="12" value="6">
-      <span class="hint" style="margin:0;">entre 6 y 12</span>
-      <button id="btn-n-continue">Continuar</button>
+  <div class="tarjeta">
+    <h2><span class="numero">01</span> Número de nodos</h2>
+    <div class="fila">
+      <input type="number" id="entrada-n" min="4" max="12" value="6">
+      <span class="ayuda sin-margen">entre 4 y 12</span>
+      <button id="btn-continuar-n">Continuar</button>
     </div>
-    <div class="error hidden" id="error-n"></div>
+    <div class="error oculto" id="error-n"></div>
   </div>
 
-  <div class="card hidden" id="card-mode">
-    <h2><span class="n">02</span> Generacion del grafo</h2>
-    <div class="choice-group">
-      <div class="choice-btn" id="choice-manual">Manual</div>
-      <div class="choice-btn" id="choice-random">Aleatorio</div>
+  <div class="tarjeta oculto" id="tarjeta-modo">
+    <h2><span class="numero">02</span> Generación del grafo</h2>
+    <div class="grupo-opciones">
+      <div class="opcion-btn" id="opcion-manual">Manual</div>
+      <div class="opcion-btn" id="opcion-aleatoria">Aleatorio</div>
     </div>
 
-    <div id="manual-panel" class="hidden">
-      <p class="hint">Haz clic en dos nodos para conectarlos o desconectarlos.</p>
-      <svg id="svg-manual" width="480" height="380" viewBox="0 0 480 380"></svg>
-      <div class="edge-list" id="manual-edge-list"></div>
+    <div id="panel-manual" class="oculto">
+      <p class="ayuda">Haz clic primero en el nodo de <b>origen</b> y luego en el de <b>destino</b> para crear una flecha (origen → destino). Puedes crear también la flecha inversa. Usa la × de cada flecha para borrarla.</p>
+      <svg id="svg-manual" viewBox="0 0 480 380"></svg>
+      <div class="lista-chips" id="lista-aristas-manual"></div>
     </div>
 
-    <div id="random-panel" class="hidden">
-      <div class="row">
-        <button class="secondary" id="btn-regenerate">Generar de nuevo</button>
+    <div id="panel-aleatorio" class="oculto">
+      <div class="fila">
+        <button class="secundario" id="btn-regenerar">Generar de nuevo</button>
       </div>
-      <svg id="svg-random" width="480" height="380" viewBox="0 0 480 380" style="margin-top:14px;"></svg>
+      <svg id="svg-aleatorio" class="svg-separado" viewBox="0 0 480 380"></svg>
     </div>
 
-    <div class="row" style="margin-top:18px;">
-      <button id="btn-build" disabled>Construir grafo (click en la X para borrar la relacion)</button>
+    <div class="fila fila-acciones">
+      <button id="btn-construir" disabled>Construir grafo</button>
     </div>
   </div>
 
-  <div class="card hidden" id="card-matrix">
-    <h2><span class="n">03</span> Matriz de adyacencia</h2>
-    <div id="matrix-container"></div>
-    <div class="row" style="margin-top:20px;">
-      <button id="btn-start-algo">Iniciar algoritmo</button>
+  <div class="tarjeta oculto" id="tarjeta-matriz">
+    <h2><span class="numero">03</span> Matriz de adyacencia</h2>
+    <p class="ayuda ayuda-tarjeta">Fila = nodo de origen, columna = nodo de destino. Como el grafo es dirigido, la matriz ya no es simétrica.</p>
+    <div id="contenedor-matriz"></div>
+    <div class="fila fila-acciones">
+      <button id="btn-iniciar">Iniciar algoritmo</button>
     </div>
   </div>
 
-  <div class="card hidden" id="card-algo">
-    <h2><span class="n">04</span> Ejecucion paso a paso (BFS)</h2>
-    <svg id="svg-algo" width="480" height="380" viewBox="0 0 480 380"></svg>
-    <div class="step-log" id="step-log">Presiona «Siguiente paso» para comenzar.</div>
-    <div class="row" style="margin-top:16px;">
-      <button id="btn-next-step">Siguiente paso</button>
-      <button class="secondary" id="btn-skip">Ir al resultado final</button>
+  <div class="tarjeta oculto" id="tarjeta-algoritmo">
+    <h2><span class="numero">04</span> Ejecución paso a paso (Tarjan)</h2>
+    <svg id="svg-algoritmo" viewBox="0 0 480 380"></svg>
+    <p class="ayuda centrado">Junto a cada nodo: <b>índice | lowlink</b>. Borde punteado = el nodo está en la pila.</p>
+    <div class="fila-pila">
+      <span class="ayuda sin-margen">Pila (base → tope):</span>
+      <div class="lista-chips" id="vista-pila"></div>
+    </div>
+    <div class="registro-pasos" id="registro-pasos"></div>
+    <div class="fila fila-acciones">
+      <button id="btn-siguiente">Siguiente paso</button>
+      <button class="secundario" id="btn-saltar">Ir al resultado final</button>
     </div>
   </div>
 
-  <div class="card hidden" id="card-results">
-    <h2><span class="n">05</span> Resultado</h2>
-    <div class="row" style="justify-content:space-between; margin-bottom:18px;">
-      <div>
-        <div class="big-number" id="result-count">0</div>
-        <div class="hint" style="margin-top:2px;">componentes conexas encontradas</div>
-      </div>
+  <div class="tarjeta oculto" id="tarjeta-resultados">
+    <h2><span class="numero">05</span> Resultado</h2>
+    <div class="resumen">
+      <div class="numero-grande" id="cantidad-resultado">0</div>
+      <div class="ayuda">componentes fuertemente conexas encontradas</div>
     </div>
-    <div class="results-list" id="results-list"></div>
-    <svg id="svg-result" width="480" height="380" viewBox="0 0 480 380" style="margin-top:20px;"></svg>
-    <div class="row" style="margin-top:18px;">
-      <button class="secondary" id="btn-restart">Empezar de nuevo</button>
+    <div class="lista-resultados" id="lista-resultados"></div>
+    <svg id="svg-resultado" class="svg-separado" viewBox="0 0 480 380"></svg>
+    <div class="fila fila-acciones">
+      <button class="secundario" id="btn-reiniciar">Empezar de nuevo</button>
     </div>
   </div>
 </div>
