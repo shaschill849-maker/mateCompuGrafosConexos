@@ -1,4 +1,4 @@
-# Componentes Conexas con Algoritmo BFS 
+# Componentes Conexas con Algoritmo Kosaraju
 Aplicacion web interactiva desarrollada para determinar e ilustrar las **componentes conexas** de un grafo no dirigido de 6 a 12 vertices utilizando el algoritmo de **KOSARAJU(DFS)**.
 
 Este proyecto fue desarrollado para el curso de **Matematica Computacional**.
@@ -32,3 +32,4 @@ La aplicacion está desarrollada completamente con tecnologias nativas web (Vani
 ├── index.html  
 ├── style.css    
 └── script.js    
+
