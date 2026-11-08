@@ -5,7 +5,8 @@
   const NS_SVG = "http://www.w3.org/2000/svg";
   const COLORES_COMPONENTES = [
     "#4fd1a5", "#e8a94c", "#7aa2f7", "#e0645a",
-    "#c792ea", "#5fd3d3", "#f28fb0", "#a3d977"
+    "#c792ea", "#5fd3d3", "#f28fb0", "#a3d977",
+    "#ff9ece", "#b4f9f8", "#bb9af7", "#e0af68" 
   ];
   const MIN_NODOS = 4;
   const MAX_NODOS = 12;
