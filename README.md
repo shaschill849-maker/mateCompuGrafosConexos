@@ -1,6 +1,6 @@
 # Componentes Conexas con Algoritmo Tarjan
 
-Aplicacion web interactiva desarrollada para determinar e ilustrar las **componentes conexas** de un grafo no dirigido de 6 a 12 vertices utilizando el algoritmo de **Tarjan(DFS)**.
+Aplicacion web interactiva desarrollada para determinar e ilustrar las **componentes conexas** de un grafo dirigido de 6 a 12 vertices utilizando el algoritmo de **Tarjan(DFS)**.
 
 Este proyecto fue desarrollado para el curso de **Matematica Computacional**.
 
