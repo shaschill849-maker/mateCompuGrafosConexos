@@ -24,8 +24,8 @@
   <div class="tarjeta oculto" id="tarjeta-modo">
     <h2><span class="numero">02</span> Generación del grafo</h2>
     <div class="grupo-opciones">
-      <div class="opcion-btn" id="opcion-manual">Manual</div>
-      <div class="opcion-btn" id="opcion-aleatoria">Aleatorio</div>
+      <button type="button" class="opcion-btn" id="opcion-manual">Manual</button>
+      <button type="button" class="opcion-btn" id="opcion-aleatoria">Aleatorio</button>
     </div>
 
     <div id="panel-manual" class="oculto">
@@ -65,6 +65,7 @@
     </div>
     <div class="registro-pasos" id="registro-pasos"></div>
     <div class="fila fila-acciones">
+      <button class="secundario" id="btn-anterior" disabled>Paso anterior</button>
       <button id="btn-siguiente">Siguiente paso</button>
       <button class="secundario" id="btn-saltar">Ir al resultado final</button>
     </div>
@@ -84,6 +85,6 @@
   </div>
 </div>
 
-<script src="script.js"></script>
+<script src="script2.js"></script>
 </body>
 </html>

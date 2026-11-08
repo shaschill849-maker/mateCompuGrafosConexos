@@ -17,6 +17,7 @@
   const DISTANCIA_ETIQUETA = 38;    // distancia de la etiqueta "índice|lowlink" al nodo
 
   const TARJETAS_POSTERIORES = ["tarjeta-modo", "tarjeta-matriz", "tarjeta-algoritmo", "tarjeta-resultados"];
+  const TARJETAS_DEPENDIENTES = ["tarjeta-matriz", "tarjeta-algoritmo", "tarjeta-resultados"];
   const TEXTO_INICIAL = "Presiona «Siguiente paso» para comenzar.";
 
   // ---------- Estado ----------
@@ -28,6 +29,7 @@
   let pasosTarjan = [];
   let indicePaso = -1;
   let componentes = [];
+  let temporizadorResultados = null;   // setTimeout pendiente que muestra los resultados
 
   // ---------- Utilidades ----------
   const $ = id => document.getElementById(id);
@@ -73,6 +75,17 @@
   function mostrarTarjeta(id) {
     mostrar(id);
     $(id).scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  // Cada vez que el grafo cambia, todo lo calculado a partir del grafo anterior deja de ser válido
+  function invalidarResultados() {
+    clearTimeout(temporizadorResultados);
+    temporizadorResultados = null;
+    ocultar(...TARJETAS_DEPENDIENTES);
+    listaAdyacencia = {};
+    pasosTarjan = [];
+    componentes = [];
+    indicePaso = -1;
   }
 
   // Reemplaza el contenido de un contenedor; si no hay elementos muestra un texto de ayuda
@@ -142,7 +155,7 @@
       const { x, y } = posicionesNodos[i - 1];
       const clases = ["nodo-circulo"];
       if (opciones.visitando === i) clases.push("visitando");
-      else if (opciones.enPila?.has(i)) clases.push("en-pila");
+      if (opciones.enPila?.has(i)) clases.push("en-pila");
       if (opciones.seleccionado === i) clases.push("seleccionado");
 
       const circulo = crearElementoSVG("circle", { cx: x, cy: y, r: RADIO_NODO, class: clases.join(" ") });
@@ -170,6 +183,7 @@
 
   // ---------- PASO 1: número de nodos ----------
   function reiniciarEtapas() {
+    invalidarResultados();
     ocultar(...TARJETAS_POSTERIORES, "panel-manual", "panel-aleatorio");
     document.querySelectorAll(".opcion-btn").forEach(b => b.classList.remove("activa"));
     $("btn-construir").disabled = true;
@@ -202,6 +216,7 @@
         const btnBorrar = crearElemento("button", "", "×");
         btnBorrar.addEventListener("click", () => {
           aristas.delete(claveArista(u, v));
+          invalidarResultados();
           refrescarModoManual();
         });
         chip.append(btnBorrar);
@@ -209,7 +224,7 @@
       });
 
     llenarLista($("lista-aristas-manual"), chips, "Sin conexiones todavía.");
-    $("btn-construir").disabled = aristas.size === 0;
+    $("btn-construir").disabled = false;
   }
 
   // Manual: 1er clic = ORIGEN, 2do clic = DESTINO (se crea origen → destino)
@@ -217,7 +232,13 @@
     if (nodoManual === null) {
       nodoManual = nodo;
     } else {
-      if (nodoManual !== nodo) aristas.add(claveArista(nodoManual, nodo));
+      if (nodoManual !== nodo) {
+        const clave = claveArista(nodoManual, nodo);
+        if (!aristas.has(clave)) {
+          aristas.add(clave);
+          invalidarResultados();
+        }
+      }
       nodoManual = null;
     }
     refrescarModoManual();
@@ -233,6 +254,7 @@
   // flechas "hacia adelante" (los grupos NO se fusionan). Con aristas totalmente al azar,
   // muchos grafos salían con todos los nodos separados, y eso no muestra nada interesante.
   function generarGrafoAleatorio() {
+    invalidarResultados();
     aristas = new Set();
     const nodos = mezclar(listaNodos());
     const cantGrupos = 2 + azar(Math.max(1, Math.floor(cantNodos / 2) - 1));   // entre 2 y n/2
@@ -263,6 +285,7 @@
     $("opcion-aleatoria").classList.toggle("activa", !esManual);
     $("panel-manual").classList.toggle("oculto", !esManual);
     $("panel-aleatorio").classList.toggle("oculto", esManual);
+    invalidarResultados();
     aristas = new Set();
     nodoManual = null;
     if (esManual) refrescarModoManual();
@@ -274,6 +297,7 @@
   $("btn-regenerar").addEventListener("click", generarGrafoAleatorio);
 
   $("btn-construir").addEventListener("click", () => {
+    invalidarResultados();
     construirAdyacencia();
     mostrarMatrizAdyacencia();
     mostrarTarjeta("tarjeta-matriz");
@@ -417,6 +441,8 @@
   function renderizarPaso() {
     const svg = $("svg-algoritmo");
     const paso = pasosTarjan[indicePaso];
+    $("btn-anterior").disabled = indicePaso < 0;
+    $("btn-siguiente").disabled = indicePaso >= pasosTarjan.length - 1;
 
     if (!paso) {
       dibujarGrafo(svg);
@@ -441,14 +467,13 @@
       enPila: new Set(paso.pila),
       info: { indice: paso.indice, low: paso.low }
     });
-
-    if (paso.tipo === "finalizado") setTimeout(mostrarResultados, 500);
   }
 
   $("btn-iniciar").addEventListener("click", () => {
     precalcularTarjan();
     indicePaso = -1;
-    $("btn-siguiente").disabled = false;
+    clearTimeout(temporizadorResultados);
+    ocultar("tarjeta-resultados");
     renderizarPaso();
     mostrarTarjeta("tarjeta-algoritmo");
   });
@@ -457,11 +482,26 @@
     if (indicePaso < pasosTarjan.length - 1) {
       indicePaso++;
       renderizarPaso();
+      if (pasosTarjan[indicePaso].tipo === "finalizado") {
+        clearTimeout(temporizadorResultados);
+        temporizadorResultados = setTimeout(mostrarResultados, 500);
+      }
+    }
+  });
+
+  $("btn-anterior").addEventListener("click", () => {
+    if (indicePaso >= 0) {
+      clearTimeout(temporizadorResultados);
+      ocultar("tarjeta-resultados");
+      indicePaso--;
+      renderizarPaso();
     }
   });
 
   $("btn-saltar").addEventListener("click", () => {
+    clearTimeout(temporizadorResultados);
     indicePaso = pasosTarjan.length - 1;
+    renderizarPaso();
     mostrarResultados();
   });
 
