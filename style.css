@@ -28,7 +28,6 @@ h1 { font-size: 1.5rem; font-weight: 650; margin: 0 0 4px; letter-spacing: -0.01
 .subtitulo { color: var(--apagado); font-size: 0.92rem; margin: 0 0 28px; }
 .contenedor { max-width: 980px; margin: 0 auto; }
 
-/* ---------- Tarjetas ---------- */
 .tarjeta {
   background: var(--panel);
   border: 1px solid var(--borde);
@@ -45,7 +44,6 @@ h1 { font-size: 1.5rem; font-weight: 650; margin: 0 0 4px; letter-spacing: -0.01
 }
 .tarjeta h2 .numero { color: var(--acento); font-family: var(--fuente-mono); }
 
-/* ---------- Controles ---------- */
 button {
   font-family: var(--fuente); font-size: 0.88rem; font-weight: 600;
   background: var(--acento); color: #0a1712;
@@ -77,14 +75,12 @@ input[type=number]:focus, button:focus-visible { outline: 2px solid var(--acento
 }
 .opcion-btn.activa { border-color: var(--acento); color: var(--acento); background: rgba(79, 209, 165, 0.08); }
 
-/* ---------- Textos de ayuda ---------- */
 .ayuda { color: var(--apagado); font-size: 0.82rem; margin-top: 10px; }
 .ayuda-tarjeta { margin: -6px 0 14px; }
 .sin-margen { margin: 0; }
 .centrado { text-align: center; }
 .error { color: var(--peligro); font-size: 0.85rem; margin-top: 8px; }
 
-/* ---------- Grafo (SVG) ---------- */
 svg { display: block; margin: 0 auto; width: 100%; max-width: 480px; height: auto; }
 .svg-separado { margin-top: 18px; }
 
@@ -104,13 +100,11 @@ svg { display: block; margin: 0 auto; width: 100%; max-width: 480px; height: aut
 .punta-normal { fill: var(--arista); }
 .punta-activa { fill: var(--ambar); }
 
-/* ---------- Matriz de adyacencia ---------- */
 table { border-collapse: collapse; margin: 0 auto; font-family: var(--fuente-mono); font-size: 0.85rem; }
 td, th { border: 1px solid var(--borde); width: 30px; height: 28px; text-align: center; color: var(--apagado); }
 th { color: var(--texto); background: var(--panel-2); }
 td.uno { color: var(--acento); font-weight: 700; }
 
-/* ---------- Chips (aristas y pila) ---------- */
 .lista-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; min-height: 20px; }
 .chip {
   display: flex; align-items: center; gap: 6px;
@@ -124,7 +118,6 @@ td.uno { color: var(--acento); font-weight: 700; }
 .fila-pila { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
 .fila-pila .lista-chips { margin-top: 0; }
 
-/* ---------- Registro de pasos y resultados ---------- */
 .registro-pasos {
   min-height: 24px; margin-top: 16px; padding: 14px 16px;
   font-family: var(--fuente-mono); font-size: 0.85rem; color: var(--texto);
