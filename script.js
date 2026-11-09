@@ -1,7 +1,6 @@
 (function () {
   "use strict";
 
-  // ---------- Constantes ----------
   const NS_SVG = "http://www.w3.org/2000/svg";
   const COLORES_COMPONENTES = [
     "#4fd1a5", "#e8a94c", "#7aa2f7", "#e0645a",
@@ -11,34 +10,30 @@
   const MIN_NODOS = 4;
   const MAX_NODOS = 12;
 
-  // Geometría del dibujo (los nodos van sobre una circunferencia)
   const CENTRO_X = 240, CENTRO_Y = 190, RADIO_ANILLO = 140, RADIO_NODO = 20;
-  const SEPARACION_FLECHAS = 6;     // separa u→v de v→u cuando existen ambas
-  const DISTANCIA_ETIQUETA = 38;    // distancia de la etiqueta "índice|lowlink" al nodo
+  const SEPARACION_FLECHAS = 6;    
+  const DISTANCIA_ETIQUETA = 38;   
 
   const TARJETAS_POSTERIORES = ["tarjeta-modo", "tarjeta-matriz", "tarjeta-algoritmo", "tarjeta-resultados"];
   const TARJETAS_DEPENDIENTES = ["tarjeta-matriz", "tarjeta-algoritmo", "tarjeta-resultados"];
   const TEXTO_INICIAL = "Presiona «Siguiente paso» para comenzar.";
 
-  // ---------- Estado ----------
   let cantNodos = MIN_NODOS;
-  let aristas = new Set();          // aristas DIRIGIDAS como texto "origen-destino"
-  let listaAdyacencia = {};         // listaAdyacencia[u] = Set de nodos a los que u APUNTA
+  let aristas = new Set();          
+  let listaAdyacencia = {};         
   let posicionesNodos = [];
-  let nodoManual = null;            // origen elegido en modo manual (a la espera del destino)
+  let nodoManual = null;            
   let pasosTarjan = [];
   let indicePaso = -1;
   let componentes = [];
-  let temporizadorResultados = null;   // setTimeout pendiente que muestra los resultados
+  let temporizadorResultados = null;   
 
-  // ---------- Utilidades ----------
   const $ = id => document.getElementById(id);
   const ordenar = elementos => [...elementos].sort((a, b) => a - b);
   const azar = k => Math.floor(Math.random() * k);
   const listaNodos = () => Array.from({ length: cantNodos }, (_, i) => i + 1);
   const colorDeComponente = i => COLORES_COMPONENTES[i % COLORES_COMPONENTES.length];
 
-  // "1-3" es 1 → 3 y "3-1" es otra arista distinta
   const claveArista = (origen, destino) => `${origen}-${destino}`;
   const leerArista = clave => clave.split("-").map(Number);
 
@@ -77,7 +72,6 @@
     $(id).scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
-  // Cada vez que el grafo cambia, todo lo calculado a partir del grafo anterior deja de ser válido
   function invalidarResultados() {
     clearTimeout(temporizadorResultados);
     temporizadorResultados = null;
@@ -88,13 +82,11 @@
     indicePaso = -1;
   }
 
-  // Reemplaza el contenido de un contenedor; si no hay elementos muestra un texto de ayuda
   function llenarLista(contenedor, elementos, textoVacio) {
     contenedor.replaceChildren(...elementos);
     if (elementos.length === 0) contenedor.append(crearElemento("span", "ayuda sin-margen", textoVacio));
   }
 
-  // ---------- Grafo ----------
   function calcularPosiciones() {
     return Array.from({ length: cantNodos }, (_, i) => {
       const angulo = -Math.PI / 2 + (2 * Math.PI * i) / cantNodos;
@@ -114,8 +106,6 @@
     });
   }
 
-  // ---------- Dibujo SVG ----------
-  // Puntas de flecha (normal y resaltada). El id incluye el del svg para no repetirse en la página.
   function crearDefinicionesFlechas(svg) {
     const defs = crearElementoSVG("defs");
     ["normal", "activa"].forEach(tipo => {
@@ -135,7 +125,7 @@
       const p1 = posicionesNodos[u - 1], p2 = posicionesNodos[v - 1];
       const dx = p2.x - p1.x, dy = p2.y - p1.y;
       const largo = Math.hypot(dx, dy);
-      const ux = dx / largo, uy = dy / largo;                                          // vector unitario u → v
+      const ux = dx / largo, uy = dy / largo;                                          
       const desfase = aristas.has(claveArista(v, u)) ? SEPARACION_FLECHAS : 0;
       const activa = clave === aristaActiva;
 
@@ -159,12 +149,10 @@
       if (opciones.seleccionado === i) clases.push("seleccionado");
 
       const circulo = crearElementoSVG("circle", { cx: x, cy: y, r: RADIO_NODO, class: clases.join(" ") });
-      // style.fill (y no el atributo fill) para que el color de la componente gane al CSS
       if (opciones.coloresNodo?.[i]) circulo.style.fill = opciones.coloresNodo[i];
       if (opciones.alHacerClic) circulo.addEventListener("click", () => opciones.alHacerClic(i));
       svg.append(circulo, crearTextoSVG(x, y, "nodo-etiqueta", i));
 
-      // Etiqueta "índice|lowlink" fuera del anillo (solo durante Tarjan)
       if (opciones.info?.indice[i] !== undefined) {
         const dirX = (x - CENTRO_X) / RADIO_ANILLO, dirY = (y - CENTRO_Y) / RADIO_ANILLO;
         svg.append(crearTextoSVG(
@@ -181,7 +169,6 @@
     dibujarNodos(svg, opciones);
   }
 
-  // ---------- PASO 1: número de nodos ----------
   function reiniciarEtapas() {
     invalidarResultados();
     ocultar(...TARJETAS_POSTERIORES, "panel-manual", "panel-aleatorio");
@@ -207,10 +194,9 @@
     mostrarTarjeta("tarjeta-modo");
   });
 
-  // ---------- PASO 2: generación del grafo ----------
   function actualizarListaAristasManual() {
     const chips = [...aristas].map(leerArista)
-      .sort((a, b) => a[0] - b[0] || a[1] - b[1])      // orden numérico ("10-2" después de "2-3")
+      .sort((a, b) => a[0] - b[0] || a[1] - b[1])      
       .map(([u, v]) => {
         const chip = crearElemento("div", "chip", `${u} → ${v}`);
         const btnBorrar = crearElemento("button", "", "×");
@@ -227,7 +213,6 @@
     $("btn-construir").disabled = false;
   }
 
-  // Manual: 1er clic = ORIGEN, 2do clic = DESTINO (se crea origen → destino)
   function alHacerClicNodoManual(nodo) {
     if (nodoManual === null) {
       nodoManual = nodo;
@@ -249,10 +234,6 @@
     actualizarListaAristasManual();
   }
 
-  // Aleatorio con estructura: se reparten los nodos en grupos al azar; dentro de cada grupo
-  // se arma un ciclo dirigido (el grupo es fuertemente conexo) y entre grupos solo se agregan
-  // flechas "hacia adelante" (los grupos NO se fusionan). Con aristas totalmente al azar,
-  // muchos grafos salían con todos los nodos separados, y eso no muestra nada interesante.
   function generarGrafoAleatorio() {
     invalidarResultados();
     aristas = new Set();
@@ -303,7 +284,6 @@
     mostrarTarjeta("tarjeta-matriz");
   });
 
-  // ---------- PASO 3: matriz de adyacencia (fila = origen, columna = destino) ----------
   function crearFila(celdaInicial, celdas) {
     const fila = crearElemento("tr");
     fila.append(celdaInicial, ...celdas);
@@ -328,18 +308,16 @@
     $("contenedor-matriz").replaceChildren(tabla);
   }
 
-  // ---------- PASO 4: algoritmo de Tarjan, grabado paso a paso ----------
   function precalcularTarjan() {
     pasosTarjan = [];
     componentes = [];
 
-    const indice = {};          // indice[u] = orden en que se descubrió u (1, 2, 3...)
-    const low = {};             // low[u]    = menor índice al que u puede volver a llegar
-    const pila = [];            // nodos descubiertos que todavía no tienen componente
-    const enPila = new Set();   // para preguntar "¿v está en la pila?" en O(1)
+    const indice = {};          
+    const low = {};             
+    const pila = [];           
+    const enPila = new Set();   
     let contador = 0;
 
-    // Graba una "foto" del estado actual (copias, para que cada paso quede congelado)
     const registrar = (tipo, datos = {}) => pasosTarjan.push({
       tipo, ...datos,
       indice: { ...indice }, low: { ...low }, pila: [...pila],
@@ -354,23 +332,18 @@
 
       ordenar(listaAdyacencia[u]).forEach(v => {
         if (indice[v] === undefined) {
-          // v nunca se visitó: se baja a explorarlo y al volver se actualiza low[u]
           registrar("descender", { desde: u, hacia: v });
           dfs(v);
           low[u] = Math.min(low[u], low[v]);
           registrar("regresar", { desde: u, hijo: v });
         } else if (enPila.has(v)) {
-          // v ya se visitó y sigue en la pila: u → v cierra un ciclo con lo que está en la pila
           low[u] = Math.min(low[u], indice[v]);
           registrar("retroceso", { desde: u, hacia: v });
         } else {
-          // v ya se visitó y ya NO está en la pila: pertenece a una componente cerrada
           registrar("ignorar", { desde: u, hacia: v });
         }
       });
 
-      // Si u no puede volver más atrás que sí mismo, u es la raíz de una componente:
-      // se desapila hasta u y todo lo desapilado forma esa componente.
       if (low[u] === indice[u]) {
         const extraidos = [];
         let w;
@@ -394,7 +367,6 @@
     registrar("finalizado");
   }
 
-  // Descripción de cada tipo de paso: texto del registro, nodo resaltado y arista activa
   const DESCRIBIR_PASO = {
     "nueva-raiz": p => ({
       texto: `Nuevo recorrido DFS desde el nodo <b>${p.inicio}</b> (todavía no visitado).`,
@@ -431,7 +403,6 @@
     finalizado: () => ({ texto: "Recorrido finalizado. Mostrando resultado final..." })
   };
 
-  // Asigna a cada nodo el color de su componente
   function colorearComponentes(lista) {
     const colores = {};
     lista.forEach((comp, i) => comp.forEach(nodo => { colores[nodo] = colorDeComponente(i); }));
@@ -505,7 +476,6 @@
     mostrarResultados();
   });
 
-  // ---------- PASO 5: resultado ----------
   function mostrarResultados() {
     $("btn-siguiente").disabled = true;
     $("cantidad-resultado").textContent = componentes.length;
